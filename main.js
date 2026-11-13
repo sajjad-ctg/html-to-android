@@ -1,4 +1,5 @@
 const { app, BrowserWindow, Menu, ipcMain, dialog, shell } = require('electron');
+const fs = require('fs');
 const path = require('path');
 const { Toolchain } = require('./toolchain');
 const { Generator } = require('./generator');
@@ -28,8 +29,13 @@ function emit(channel, payload) {
 }
 
 function createWindow() {
+  // Window icon in dev; the packaged exe carries its own icon (build/ is
+  // excluded from the bundle on purpose)
+  const iconPath = path.join(__dirname, 'build', 'icon.png');
+
   mainWindow = new BrowserWindow({
     width: 940,
+    icon: fs.existsSync(iconPath) ? iconPath : undefined,
     height: 1100,
     minWidth: 800,
     minHeight: 720,

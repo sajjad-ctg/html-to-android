@@ -1,0 +1,37 @@
+name: Release
+
+# Tag a version (e.g. git tag v0.1.0 && git push --tags) to build the
+# Windows installers on a clean runner and attach them to a GitHub Release.
+# The installer is unsigned — users click "More info -> Run anyway" in
+# SmartScreen (see README).
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build installers (NSIS setup + portable)
+        run: npm run dist
+
+      - name: Create GitHub release with artifacts
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*.exe
+          generate_release_notes: true

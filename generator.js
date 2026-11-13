@@ -18,7 +18,20 @@ const path = require('path');
 const { spawn } = require('child_process');
 const { Jimp } = require('jimp');
 
-const TEMPLATE_DIR = path.join(__dirname, 'template', 'android');
+// Template location: repo folder in dev (and in headless tests). In the
+// PACKAGED app electron-builder ships template/ as a REAL folder next to the
+// exe (extraResources -> resources/template) — file copies and Gradle must
+// touch real files, not app.asar. Only trust resourcesPath when actually
+// running inside a packaged Electron build (never in plain-node tests).
+function resolveTemplateDir() {
+  const dev = path.join(__dirname, 'template', 'android');
+  if (process.versions.electron && !process.defaultApp && process.resourcesPath) {
+    const packed = path.join(process.resourcesPath, 'template', 'android');
+    if (fs.existsSync(packed)) return packed;
+  }
+  return dev;
+}
+const TEMPLATE_DIR = resolveTemplateDir();
 
 const PACKAGE_RE = /^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/;
 

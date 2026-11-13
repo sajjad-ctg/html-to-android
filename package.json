@@ -5,6 +5,49 @@
   "main": "main.js",
   "license": "MIT",
   "author": "MSKCTG",
+  "build": {
+    "appId": "com.mskctg.htmltoandroid",
+    "productName": "html-to-android",
+    "artifactName": "${productName} Setup ${version}.${ext}",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "**/*",
+      "!.git/**",
+      "!template/**",
+      "!build/**",
+      "!dist/**",
+      "!*.md"
+    ],
+    "extraResources": [
+      {
+        "from": "template",
+        "to": "template"
+      }
+    ],
+    "win": {
+      "icon": "build/icon.png",
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "html-to-android",
+      "deleteAppDataOnUninstall": false,
+      "uninstallDisplayName": "${productName}"
+    },
+    "portable": {
+      "artifactName": "${productName} Portable ${version}.${ext}"
+    }
+  },
   "scripts": {
     "start": "electron .",
     "dist": "electron-builder --win nsis portable"

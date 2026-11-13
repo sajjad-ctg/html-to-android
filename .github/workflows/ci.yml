@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Syntax check
+        run: |
+          $files = 'main.js','preload.js','generator.js','toolchain.js','builder.js','signer.js','state.js','renderer/renderer.js','tests/ci-checks.js'
+          foreach ($f in $files) {
+            node --check $f
+            if ($LASTEXITCODE -ne 0) { Write-Host "SYNTAX FAIL: $f"; exit 1 }
+            Write-Host "syntax OK: $f"
+          }
+
+      - name: Fast checks (no Android toolchain needed)
+        run: node tests/ci-checks.js
