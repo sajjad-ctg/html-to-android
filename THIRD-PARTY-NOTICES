@@ -1,0 +1,48 @@
+html-to-android bundles or depends on the third-party components listed
+below. Each remains under its own license; this project's MIT license
+(LICENSE) applies only to html-to-android's own code.
+
+
+1. Capacitor — Android runtime and project template
+   Location:   template/android/ (capacitor-android/ source, resources,
+               gradle build files derived from the Capacitor template)
+   License:    Apache License 2.0 (full text: licenses/Apache-2.0.txt)
+   Copyright:  2017-present Ionic (https://capacitorjs.com)
+   Source:     https://github.com/ionic-team/capacitor
+
+2. Gradle Wrapper (gradle-wrapper.jar and wrapper scripts)
+   Location:   template/android/gradle/wrapper/, template/android/gradlew*
+   License:    Apache License 2.0 (full text: licenses/Apache-2.0.txt)
+   Copyright:  Gradle Inc.
+   Source:     https://github.com/gradle/gradle
+
+3. Electron
+   License:    MIT
+   Source:     https://www.electronjs.org
+
+4. jimp
+   License:    MIT
+   Source:     https://github.com/jimp-dev/jimp
+
+5. electron-builder (development dependency only, not shipped)
+   License:    MIT
+   Source:     https://www.electron.build
+
+   Full transitive npm dependency list: run `npm ls` in the repo root.
+   Every package's own license file is inside node_modules/<pkg>/LICENSE.
+
+
+Downloaded on the user's machine by the first-run Setup (NOT distributed
+with this repository, installed into %LOCALAPPDATA%\html-to-android only):
+
+6. Eclipse Temurin JDK
+    License:   GPLv2 with Classpath Exception
+    Source:    https://adoptium.net
+
+7. Android SDK (command-line tools, platforms, build-tools, platform-tools)
+    License:   Apache License 2.0
+    Source:    https://developer.android.com
+
+8. Gradle distribution (the wrapper downloads the distribution itself)
+    License:   Apache License 2.0
+    Source:    https://gradle.org

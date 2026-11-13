@@ -1,0 +1,5 @@
+// Capacitor Android project settings — customized by html-to-android:
+// ':capacitor-android' is VENDORED inside this project (capacitor-android/)
+// so builds never depend on node_modules. DO NOT run "capacitor update" here.
+include ':capacitor-android'
+project(':capacitor-android').projectDir = new File('./capacitor-android')

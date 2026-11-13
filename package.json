@@ -1,0 +1,19 @@
+{
+  "name": "html-to-android",
+  "version": "0.1.0",
+  "description": "Convert HTML5 apps and games (.zip) into signed Android APK + AAB - free & open source",
+  "main": "main.js",
+  "license": "MIT",
+  "author": "MSKCTG",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win nsis portable"
+  },
+  "devDependencies": {
+    "electron": "^45.3.1",
+    "electron-builder": "^26.18.0"
+  },
+  "dependencies": {
+    "jimp": "^1.6.1"
+  }
+}

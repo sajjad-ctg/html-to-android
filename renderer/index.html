@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>html-to-android</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ================= HEADER ================= -->
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-icon">&#9889;</div>
+      <div class="brand-text">
+        <div class="brand-title">html-to-android</div>
+        <div class="brand-sub">HTML5 &rarr; signed APK + AAB &middot; free &amp; open source &middot; by MSKCTG</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="btn-theme" class="ghost-btn icon-btn" type="button" title="Switch to light theme">&#9728;&#65039;</button>
+      <button id="btn-setup" class="ghost-btn" type="button">&#9881; Setup</button>
+    </div>
+  </header>
+
+  <!-- ================= CONTENT ================= -->
+  <main class="content">
+
+    <!-- ---------- APP ---------- -->
+    <section class="card">
+      <h2 class="card-title">APP</h2>
+
+      <div class="row">
+        <label for="in-zip">HTML5 .zip</label>
+        <input id="in-zip" type="text" placeholder="Select your game or app .zip&hellip;" />
+        <button class="browse" data-browse="zip" type="button">Browse</button>
+      </div>
+
+      <div class="row">
+        <label for="in-appname">App name</label>
+        <input id="in-appname" type="text" placeholder="My Game" />
+        <span class="cell3"></span>
+      </div>
+
+      <div class="row">
+        <label for="in-package">Package name</label>
+        <input id="in-package" type="text" value="com.example.mygame" spellcheck="false" />
+        <span class="cell3"></span>
+      </div>
+
+      <div class="row">
+        <label for="in-vername">Version name</label>
+        <input id="in-vername" type="text" value="1.0.0" spellcheck="false" />
+        <span class="cell3"></span>
+      </div>
+
+      <div class="row">
+        <label for="in-vercode">Version code</label>
+        <input id="in-vercode" type="number" min="1" value="1" />
+        <span class="cell3"></span>
+        <label class="check-inline span-note">
+          <input type="checkbox" id="in-autoinc" checked />
+          Auto-increment version code after each successful build
+        </label>
+        <span class="span-note note-green" id="last-built" hidden></span>
+      </div>
+
+      <div class="row">
+        <label for="in-orientation">Orientation</label>
+        <select id="in-orientation">
+          <option value="portrait" selected>portrait</option>
+          <option value="landscape">landscape</option>
+          <option value="sensor">sensor (auto-rotate)</option>
+        </select>
+        <span class="cell3"></span>
+      </div>
+
+      <div class="row">
+        <label>Screen</label>
+        <div class="checks">
+          <label class="check-inline">
+            <input type="checkbox" id="in-fullscreen" />
+            Fullscreen (hide status &amp; nav bars)
+          </label>
+          <label class="check-inline">
+            <input type="checkbox" id="in-keepon" />
+            Keep screen on
+          </label>
+        </div>
+        <span class="cell3"></span>
+      </div>
+
+      <div class="row">
+        <label>Back button</label>
+        <div class="checks">
+          <label class="check-inline">
+            <input type="checkbox" id="in-backexit" checked />
+            Ask &ldquo;Exit the application?&rdquo; before closing
+          </label>
+        </div>
+        <span class="cell3"></span>
+      </div>
+
+      <div class="row">
+        <label for="in-icon">Icon (PNG 512&times;512)</label>
+        <input id="in-icon" type="text" placeholder="Optional &mdash; generated if empty&hellip;" />
+        <button class="browse" data-browse="icon" type="button">Browse</button>
+      </div>
+
+      <div class="row">
+        <label for="in-output">Output folder</label>
+        <input id="in-output" type="text" placeholder="Where the .apk and .aab are saved&hellip;" />
+        <button class="browse" data-browse="output" type="button">Browse</button>
+      </div>
+    </section>
+
+    <!-- ---------- ANDROID VERSION ---------- -->
+    <section class="card">
+      <h2 class="card-title">ANDROID VERSION</h2>
+
+      <div class="row">
+        <label for="in-target">Target API</label>
+        <select id="in-target">
+          <option value="36" selected>36 &mdash; Android 16 (recommended)</option>
+          <option value="35">35 &mdash; Android 15</option>
+          <option value="34">34 &mdash; Android 14</option>
+        </select>
+        <span class="cell3"></span>
+      </div>
+
+      <div class="row">
+        <label for="in-min">Minimum API</label>
+        <select id="in-min">
+          <option value="26" selected>26 &mdash; Android 8.0</option>
+          <option value="24">24 &mdash; Android 7.0</option>
+          <option value="23">23 &mdash; Android 6.0</option>
+          <option value="21">21 &mdash; Android 5.0</option>
+        </select>
+        <span class="cell3"></span>
+      </div>
+
+      <p class="note-green card-note">API 36 meets Google Play's current requirement for new apps and updates (API 36+).</p>
+      <p class="card-note"><a href="#" id="link-play">Check Google Play's current target API requirement</a></p>
+
+      <!-- ---------- Advanced (build toolchain) — future-proof overrides ---------- -->
+      <details class="advanced">
+        <summary><span class="arrow">&#9654;</span> Advanced (build toolchain)</summary>
+        <div class="adv-rows">
+          <div class="row">
+            <label for="in-compile">Compile API</label>
+            <input id="in-compile" type="text" placeholder="auto" spellcheck="false" />
+            <span class="cell3"></span>
+          </div>
+          <div class="row">
+            <label for="in-agp">Android Gradle Plugin</label>
+            <input id="in-agp" type="text" placeholder="auto (picked from Target API)" spellcheck="false" />
+            <span class="cell3"></span>
+          </div>
+          <div class="row">
+            <label for="in-gradle">Gradle version</label>
+            <input id="in-gradle" type="text" placeholder="auto (picked from Target API)" spellcheck="false" />
+            <span class="cell3"></span>
+          </div>
+        </div>
+        <p class="adv-note">Leave these empty unless a new Android version needs a newer toolchain than this app knows about.</p>
+      </details>
+    </section>
+
+    <!-- ---------- SIGNING ---------- -->
+    <section class="card">
+      <h2 class="card-title">SIGNING</h2>
+
+      <div class="row">
+        <span class="label-spacer"></span>
+        <label class="check-inline">
+          <input type="checkbox" id="in-sign" />
+          Sign with my keystore (required for Play Store)
+        </label>
+        <span class="cell3"></span>
+      </div>
+
+      <p class="card-note">
+        Always signed: with the default test key when unticked (installs on your phone,
+        but <strong>not</strong> usable for Play Store releases &mdash; and a new test key is
+        generated if the app's data folder is deleted, so updates would break).
+        Tick the box and create your own keystore before publishing.
+      </p>
+
+      <div class="row">
+        <label for="in-keystore">Keystore (.jks)</label>
+        <input id="in-keystore" type="text" placeholder="Browse to your .jks / .keystore&hellip;" disabled />
+        <button class="browse" data-browse="keystore" type="button" disabled>Browse</button>
+      </div>
+
+      <div class="row">
+        <label for="in-alias">Key alias</label>
+        <input id="in-alias" type="text" placeholder="e.g. upload" disabled spellcheck="false" />
+        <span class="cell3"></span>
+      </div>
+
+      <div class="row">
+        <label for="in-kspass">Keystore password</label>
+        <input id="in-kspass" type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" disabled />
+        <span class="cell3"></span>
+      </div>
+
+      <div class="row">
+        <label for="in-keypass">Key password</label>
+        <input id="in-keypass" type="password" placeholder="same as keystore if empty" disabled />
+        <span class="cell3"></span>
+      </div>
+
+      <div class="row">
+        <span class="label-spacer"></span>
+        <div><button id="btn-newkeystore" class="secondary-btn" type="button" disabled>Create new keystore&hellip;</button></div>
+        <span class="cell3"></span>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="app-footer">
+    <div class="log-panel" id="log-panel" hidden>
+      <div class="log-head">
+        <span>Build log</span>
+        <button id="btn-log-clear" class="log-mini-btn" type="button">Clear</button>
+      </div>
+      <div class="log-body" id="log-body"></div>
+    </div>
+    <div id="status-line" class="status-line" role="status"></div>
+    <button id="btn-build" class="build-btn" type="button">BUILD APK + AAB</button>
+  </footer>
+
+  <!-- ================= FIRST-RUN SETUP (Phase 2: real local downloads) ================= -->
+  <div id="setup-screen" class="setup-overlay" hidden>
+    <div class="setup-panel">
+      <h2>First-run setup</h2>
+      <p class="setup-sub">
+        Downloads the free Android build tools into this app's own local data folder &mdash;
+        nothing is installed globally, no admin rights needed. About 700&nbsp;MB total, one time,
+        then reused by every later build (fully offline).
+        Starting setup accepts Google's
+        <a href="#" id="link-sdk-license">Android SDK License Agreement</a>.
+      </p>
+
+      <div class="setup-step" id="step-jdk">
+        <div class="step-head">
+          <span class="step-name">JDK 17 (Temurin)</span>
+          <span class="pill">~180 MB</span>
+          <span class="step-status" id="status-jdk">Checking&hellip;</span>
+        </div>
+        <div class="progress"><div class="bar" id="bar-jdk"></div></div>
+      </div>
+
+      <div class="setup-step" id="step-sdk">
+        <div class="step-head">
+          <span class="step-name">Android SDK (tools, platform, build-tools)</span>
+          <span class="pill">~350 MB</span>
+          <span class="step-status" id="status-sdk">Checking&hellip;</span>
+        </div>
+        <div class="progress"><div class="bar" id="bar-sdk"></div></div>
+      </div>
+
+      <div class="setup-step" id="step-gradle">
+        <div class="step-head">
+          <span class="step-name">Gradle</span>
+          <span class="pill">~130 MB</span>
+          <span class="step-status muted" id="status-gradle">on first build</span>
+        </div>
+        <div class="progress"><div class="bar bar-muted" id="bar-gradle"></div></div>
+      </div>
+
+      <p class="note-green install-loc">Install location: <span id="install-loc">&hellip;</span></p>
+      <p class="setup-error" id="setup-error" hidden></p>
+
+      <div class="setup-actions">
+        <button id="btn-setup-back" class="secondary-btn" type="button">Back</button>
+        <button id="btn-setup-start" class="build-btn small" type="button">Start setup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= CREATE KEYSTORE MODAL (Phase 5) ================= -->
+  <div id="keystore-screen" class="setup-overlay" hidden>
+    <div class="setup-panel ks-panel">
+      <h2>Create release keystore</h2>
+      <p class="setup-sub">
+        This key proves the app is yours. <strong>Back up the file and the passwords</strong> &mdash;
+        if you lose them, you can never update the same app on Google Play again.
+        The file stays on your PC; you will also upload it to Play later as your "upload key".
+      </p>
+
+      <div class="row">
+        <label for="ks-file">Save as</label>
+        <input id="ks-file" type="text" placeholder="Choose a location&hellip;" spellcheck="false" />
+        <button class="browse" id="btn-ks-browse" type="button">Browse</button>
+      </div>
+
+      <div class="row">
+        <label for="ks-alias">Key alias</label>
+        <input id="ks-alias" type="text" value="upload" spellcheck="false" />
+        <span class="cell3"></span>
+      </div>
+
+      <div class="row">
+        <label for="ks-pass">Password</label>
+        <input id="ks-pass" type="password" placeholder="min. 6 characters &mdash; no &quot; or %" />
+        <span class="cell3"></span>
+      </div>
+
+      <div class="row">
+        <label for="ks-pass2">Repeat password</label>
+        <input id="ks-pass2" type="password" placeholder="type it again" />
+        <span class="cell3"></span>
+      </div>
+
+      <div class="row">
+        <label for="ks-cn">Your name (CN)</label>
+        <input id="ks-cn" type="text" placeholder="e.g. Sajjad / MSKCTG" spellcheck="false" />
+        <span class="cell3"></span>
+      </div>
+
+      <div class="row">
+        <label for="ks-org">Organization (O)</label>
+        <input id="ks-org" type="text" placeholder="optional, e.g. MSKCTG" spellcheck="false" />
+        <span class="cell3"></span>
+      </div>
+
+      <div class="row">
+        <label for="ks-country">Country (C)</label>
+        <input id="ks-country" type="text" placeholder="2 letters, e.g. PK" maxlength="2" spellcheck="false" />
+        <span class="cell3"></span>
+      </div>
+
+      <p class="setup-error" id="ks-error" hidden></p>
+
+      <div class="setup-actions">
+        <button id="btn-ks-cancel" class="secondary-btn" type="button">Cancel</button>
+        <button id="btn-ks-create" class="build-btn small" type="button">Create keystore</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

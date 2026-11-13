@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">html-to-android</string>
+    <string name="title_activity_main">html-to-android</string>
+    <string name="package_name">com.htmltoandroid.app</string>
+    <string name="custom_url_scheme">com.htmltoandroid.app</string>
+</resources>

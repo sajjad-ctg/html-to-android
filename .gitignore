@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Packaging output
+dist/
+out/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / editor noise
+Thumbs.db
+.DS_Store
+.idea/
+.vscode/
