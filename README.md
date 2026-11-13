@@ -4,6 +4,8 @@
 
 `HTML5 → signed APK + AAB · free & open source · by MSKCTG`
 
+[![CI](https://github.com/sajjad-ctg/html-to-android/actions/workflows/ci.yml/badge.svg)](https://github.com/sajjad-ctg/html-to-android/actions/workflows/ci.yml)
+
 ![App screenshot](docs/screenshot.png)
 
 ## Why
