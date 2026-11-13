@@ -69,6 +69,55 @@ function main() {
   check('LICENSE file exists', fs.existsSync(path.join(ROOT, 'LICENSE')));
   check('THIRD-PARTY-NOTICES exists', fs.existsSync(path.join(ROOT, 'THIRD-PARTY-NOTICES')));
 
+  // --- back-button 4-combo matrix (dialog x history) ---
+  const MA_REL = path.join('app', 'src', 'main', 'java', 'com', 'htmltoandroid', 'app', 'MainActivity.java');
+  const maTpl = fs.readFileSync(mainActivity, 'utf8');
+  const combos = [
+    { dialog: true, history: true },
+    { dialog: true, history: false },
+    { dialog: false, history: true },
+    { dialog: false, history: false }
+  ];
+  for (const c of combos) {
+    const label = `back matrix: dialog=${c.dialog} history=${c.history}`;
+    const dir = path.join(tmp, 'combo', `${c.dialog}-${c.history}`);
+    fs.mkdirSync(path.dirname(path.join(dir, MA_REL)), { recursive: true });
+    fs.writeFileSync(path.join(dir, MA_REL), maTpl, 'utf8');
+    gen.patchMainActivity(dir, true, true, c.dialog, c.history);
+    const src = fs.readFileSync(path.join(dir, MA_REL), 'utf8');
+    const ok =
+      // callback always registered (Capacitor has no back handling of its own)
+      /getOnBackPressedDispatcher\(\)\.addCallback/.test(src) &&
+      /OnBackPressedCallback\(true\)/.test(src) &&
+      !/HTML2ANDROID:BACK_EXIT/.test(src) &&
+      // history gate
+      (c.history
+        ? /webView\.canGoBack\(\)/.test(src) && /webView\.goBack\(\)/.test(src)
+        : !/canGoBack/.test(src) && !/goBack/.test(src)) &&
+      // dialog gate (exact copy when on, fully absent when off)
+      (c.dialog
+        ? /setTitle\("Exit the application\?"\)/.test(src) &&
+          /setNegativeButton\("Cancel"/.test(src) &&
+          /setPositiveButton\("Exit"/.test(src)
+        : !/Exit the application\?/.test(src) && !/AlertDialog/.test(src)) &&
+      // app still closes in every combo
+      (c.dialog ? /\(dialog, which\) -> finish\(\)/.test(src) : /finish\(\);/.test(src));
+    check(label, ok);
+  }
+  check(
+    'backHistory defaults ON when input omits it',
+    (() => {
+      const dir = path.join(tmp, 'combo', 'default');
+      fs.mkdirSync(path.dirname(path.join(dir, MA_REL)), { recursive: true });
+      fs.writeFileSync(path.join(dir, MA_REL), maTpl, 'utf8');
+      // simulate generate()'s call site: input.backHistory !== false
+      const input = { backExit: true };
+      gen.patchMainActivity(dir, true, true, input.backExit, input.backHistory !== false);
+      const src = fs.readFileSync(path.join(dir, MA_REL), 'utf8');
+      return /webView\.goBack\(\)/.test(src);
+    })()
+  );
+
   fs.rmSync(tmp, { recursive: true, force: true });
   console.log(failed ? `\n${failed} check(s) FAILED` : '\nAll CI checks passed');
   process.exit(failed ? 1 : 0);

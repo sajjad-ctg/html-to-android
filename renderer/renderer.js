@@ -306,6 +306,7 @@ function collectInput() {
     fullscreen: $('in-fullscreen').checked,
     keepScreenOn: $('in-keepon').checked,
     backExit: $('in-backexit').checked,
+    backHistory: $('in-backhistory').checked,
     iconPath: $('in-icon').value.trim(),
     outputFolder: $('in-output').value.trim(),
     autoIncrement: $('in-autoinc').checked,

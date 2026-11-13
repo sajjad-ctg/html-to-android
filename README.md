@@ -20,7 +20,7 @@ This app puts all of that behind one dark-themed window: pick your zip, choose a
 - **Always signed** — works out of the box with a bundled default test key; switch to your own keystore when publishing (Play Store requires it)
 - **No Android Studio, no admin rights** — first run downloads JDK + Android SDK + Gradle (~1.7 GB) into `%LOCALAPPDATA%\html-to-android` only, and reuses them forever; builds work **offline** afterwards
 - **Immersive fullscreen** — hides status + navigation bars; a swipe from any edge briefly reveals them (standard game behavior)
-- **Back-button confirm** — goes back in page history when possible, otherwise shows a native *"Exit the application?"* **[Cancel] [Exit]** dialog instead of instantly quitting
+- **Back-button control** — two independent options: walk page history with the back button, and ask a native *"Exit the application?"* **[Cancel] [Exit]** dialog before quitting (off = back closes immediately)
 - **Keep screen on** — the screen never sleeps mid-game
 - **Orientation lock** — portrait / landscape / any
 - **Export bridge** — injects `window.AndroidBridge.saveFile(name, mime, base64)` so HTML5 apps can export JSON/CSV/PDF straight to the phone's **Downloads** folder (WebView ignores plain `<a download>` links — this fixes that)

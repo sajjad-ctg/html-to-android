@@ -77,25 +77,39 @@ const FULLSCREEN_CODE = `if (android.os.Build.VERSION.SDK_INT >= android.os.Buil
 
 const KEEP_SCREEN_ON_CODE = `getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);`;
 
-// Back button: go back in WebView history when possible, otherwise show a
-// native confirm dialog "Exit the application?" before closing the app.
+// Back button — the callback is ALWAYS registered so behavior is
+// deterministic (Capacitor itself registers no back handling at all, so
+// without it the app would just close on back press):
+//   history ON : first walk the WebView's page history (browser-like)
+//   dialog ON  : when nothing is left to handle, ask "Exit the application?" [Cancel] [Exit]
+//   both OFF   : close the app immediately
 // Registered via OnBackPressedDispatcher (the modern replacement for the
 // deprecated onBackPressed() override).
-const BACK_EXIT_CODE = `getOnBackPressedDispatcher().addCallback(this, new androidx.activity.OnBackPressedCallback(true) {
-    @Override
-    public void handleOnBackPressed() {
+function buildBackExitCode(backExit, backHistory) {
+  const history = backHistory
+    ? `
         android.webkit.WebView webView = getBridge() == null ? null : getBridge().getWebView();
         if (webView != null && webView.canGoBack()) {
             webView.goBack();
             return;
-        }
+        }`
+    : '';
+  const tail = backExit
+    ? `
         new androidx.appcompat.app.AlertDialog.Builder(MainActivity.this)
             .setTitle("Exit the application?")
             .setNegativeButton("Cancel", null)
             .setPositiveButton("Exit", (dialog, which) -> finish())
-            .show();
+            .show();`
+    : `
+        finish();`;
+
+  return `getOnBackPressedDispatcher().addCallback(this, new androidx.activity.OnBackPressedCallback(true) {
+    @Override
+    public void handleOnBackPressed() {${history}${tail}
     }
 });`;
+}
 
 class Generator {
   constructor(dataRoot) {
@@ -217,7 +231,7 @@ class Generator {
       this.patchToolchainOverrides(projectDir, overrides);
       this.patchManifestOrientation(projectDir, input.orientation);
       this.patchStrings(projectDir, appName, packageName);
-      this.patchMainActivity(projectDir, !!input.fullscreen, !!input.keepScreenOn, !!input.backExit);
+      this.patchMainActivity(projectDir, !!input.fullscreen, !!input.keepScreenOn, !!input.backExit, input.backHistory !== false);
       this.patchCapacitorConfig(projectDir, packageName, appName, !!input.fullscreen);
 
       // 5. icons
@@ -427,7 +441,7 @@ class Generator {
     );
   }
 
-  patchMainActivity(projectDir, fullscreen, keepScreenOn, backExit) {
+  patchMainActivity(projectDir, fullscreen, keepScreenOn, backExit, backHistory) {
     const f = path.join(
       projectDir,
       'app',
@@ -458,7 +472,8 @@ class Generator {
 
     apply('HTML2ANDROID:FULLSCREEN', fullscreen, FULLSCREEN_CODE);
     apply('HTML2ANDROID:KEEP_SCREEN_ON', keepScreenOn, KEEP_SCREEN_ON_CODE);
-    apply('HTML2ANDROID:BACK_EXIT', backExit, BACK_EXIT_CODE);
+    // Always registered — content varies with the two checkbox options
+    apply('HTML2ANDROID:BACK_EXIT', true, buildBackExitCode(backExit, backHistory));
 
     fs.writeFileSync(f, text, 'utf8');
   }
